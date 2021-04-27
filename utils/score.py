@@ -25,7 +25,7 @@ def get_calibration(distribution, realizations, b = 10, plot = False):
     deciles = sorted([-5] + deciles[:-1] + [5])
     bins = [[deciles[i], deciles[i+1]] for i in range(len(deciles)-1)]
 
-    p_content = [0.1 for i in range(10)]
+    p_content = [1/b for i in range(b)]
     counts, _= np.histogram(realizations, deciles)
     counts = counts/np.sum(counts)
 
@@ -41,7 +41,7 @@ def get_l_u(distributions):
     Contains the realizations of the variable t for each expert. (n_experts, 2)
     """
     l = [np.quantile(norm.rvs(size = 1000, loc = pred[0], scale = pred[1]), 0.05) for pred in distributions]
-    u = [np.quantile(norm.rvs(size = 1000, loc = pred[0], scale = pred[1]), 0.05) for pred in distributions]
+    u = [np.quantile(norm.rvs(size = 1000, loc = pred[0], scale = pred[1]), 0.95) for pred in distributions]
     return l, u
 
 def get_informativeness(distribution, realizations, b, us, ls, theta = 0):
