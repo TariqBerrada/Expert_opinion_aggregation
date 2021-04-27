@@ -1,3 +1,4 @@
+
 import numpy as np
 
 import sys
@@ -13,18 +14,20 @@ from utils.combin import weighted_avg
 import matplotlib.pyplot as plt
 
 n_experts = 3
-n_seed = 30 # S in the paper, number of seed variables.
+n_seed = 35 # S in the paper, number of seed variables.
 n_replicates = 30 # T in the paper, number of replicates of the target.
 
-for epoch in range(100):
+f_list = []
+
+for epoch in tqdm.tqdm(range(100)):
 
     error_stds = [np.random.random() for i in range(n_experts)]
-    experts = [Expert(error_std = error_stds[i], n_seed = n_seed, n_replicates = n_replicates) for i in range(n_experts)]
-    variables = [Variable(0, error_stds) for _ in range(n_seed + n_replicates)]
+    # experts = [Expert(error_std = error_stds[i], n_seed = n_seed, n_replicates = n_replicates) for i in range(n_experts)]
+    variables = [Variable(0, error_stds) for _ in range(n_seed + n_replicates)] # n_experts, S+T, 2
     cov_init = np.eye(n_experts)
     cov_update = cov_init
 
-    # y1 = []
+    # y1 = [# ]
     # s1 = []
     # y2 = []
     # s2 = []
@@ -36,7 +39,7 @@ for epoch in range(100):
     # y5 = []
 
     score_mean, score_w = [], []
-    f_list = []
+    ############# f_list = []
 
     for iteration in tqdm.tqdm(range(100)):
         # Generate expert predictions for the variables.
@@ -107,7 +110,8 @@ for epoch in range(100):
     # plt.plot(score_w, label = 'weighted average')
 
     # plt.show()
+f_list.append(f_w)
 
 print(' - mean : ', np.mean(f_list))
 print(' - var : ', np.var(f_list))
-print('f > .5 : ', len(np.where(f_list > .5)[0]))
+print('f > .5 : ', len(np.where(np.array(f_list) > .5)[0])/len(f_list))
